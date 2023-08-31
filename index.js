@@ -20,9 +20,7 @@ class Model {
   }
 
   async getUserById(id) {
-    const { rows }  = await pool.query("select * from tbl_user where id_user = $1;", [
-      id,
-    ]);
+    const { rows }  = await pool.query("select * from tbl_user where id_user = $1;", [ id ]);
     return rows[0];
   }
 
@@ -45,7 +43,7 @@ class Model {
   }
   
   async getAVGEdad() {
-    const { rows } = await pool.query(`SELECT  ROUND(AVG(EXTRACT(YEAR FROM AGE(NOW(), fecha_nacimiento)))::numeric, 2) AS promedio_edades 
+    const { rows } = await pool.query(`SELECT ROUND(AVG(EXTRACT(YEAR FROM AGE(NOW(), fecha_nacimiento)))::numeric, 2) AS promedio_edades 
                       FROM tbl_user`);
     console.log(rows);
     return rows
@@ -111,12 +109,12 @@ const controller = new Controller(model);
 app.use(express.json());
 
 app.get("/usuarios", controller.getUsers.bind(controller));
+app.get("/usuarios/promedio-edad/", controller.getAVGEdad.bind(controller));
 app.get("/usuarios/:id", controller.getUserById.bind(controller));
 app.post("/usuarios", controller.addUser.bind(controller));
 app.put("/usuarios/:id", controller.updateItem.bind(controller));
 app.delete("/usuarios/:id", controller.deleteItem.bind(controller));
 app.get("/estado", controller.getEstado.bind(controller));
-app.get("/usuarios/promedio-edad", controller.getAVGEdad.bind(controller));
 
 app.listen(port, () => {
   console.log(`Este servidor se ejecuta en http://localhost:${port}`);
